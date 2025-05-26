@@ -1,0 +1,234 @@
+/* --- Global Styles & Fonts --- */
+@import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;700&display=swap');
+
+:root {
+    --background: #1a1a2e;
+    --terminal-bg: rgba(22, 22, 37, 0.75);
+    --terminal-header: #2e2e48;
+    --text-color: #e0e0e0;
+    --prompt-color: #82aaff;
+    --command-color: #c3e88d;
+    --error-color: #f07178;
+    --highlight-color: #ffcb6b;
+    --border-color: rgba(127, 127, 213, 0.2);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Source Code Pro', monospace;
+    background-color: var(--background);
+    background-image: 
+        radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.05), transparent),
+        url('https://www.transparenttextures.com/patterns/cubes.png');
+    color: var(--text-color);
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+/* --- Terminal Container --- */
+#terminal {
+    width: 100%;
+    max-width: 800px;
+    height: 90vh;
+    max-height: 600px;
+    background: var(--terminal-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    overflow: hidden;
+    position: relative; /* For scanlines */
+}
+
+/* --- CRT Scanlines Effect --- */
+#terminal::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, rgba(24,24,36,0) 0%, rgba(24,24,36,0.3) 50%, rgba(24,24,36,0) 100%);
+    background-size: 100% 4px;
+    animation: scanlines 10s linear infinite;
+    pointer-events: none;
+}
+
+@keyframes scanlines {
+    from { background-position: 0 0; }
+    to { background-position: 0 -200px; }
+}
+
+/* --- Terminal Header (Fake Window Bar) --- */
+.terminal-header {
+    background: var(--terminal-header);
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+.dot.red { background: #ff5f56; }
+.dot.yellow { background: #ffbd2e; }
+.dot.green { background: #27c93f; }
+
+.title {
+    color: var(--text-color);
+    font-weight: bold;
+    text-align: center;
+    flex-grow: 1;
+    margin-right: 70px; /* To center it properly */
+}
+
+/* --- Terminal Body & Content --- */
+#terminal-body {
+    flex-grow: 1;
+    padding: 10px;
+    overflow-y: auto;
+    word-wrap: break-word;
+}
+
+/* Custom scrollbar */
+#terminal-body::-webkit-scrollbar {
+    width: 8px;
+}
+#terminal-body::-webkit-scrollbar-track {
+    background: transparent;
+}
+#terminal-body::-webkit-scrollbar-thumb {
+    background-color: var(--prompt-color);
+    border-radius: 4px;
+}
+
+/* --- Input Line & Prompt --- */
+.input-line {
+    display: flex;
+    align-items: center;
+}
+
+.prompt {
+    color: var(--prompt-color);
+    font-weight: bold;
+    margin-right: 8px;
+    white-space: nowrap;
+}
+
+#command-input {
+    background: none;
+    border: none;
+    color: var(--command-color);
+    font-family: inherit;
+    font-size: 1em;
+    width: 100%;
+    padding: 0;
+}
+
+#command-input:focus {
+    outline: none;
+    caret-color: var(--highlight-color);
+}
+
+/* --- Output Styles --- */
+.output-command {
+    color: var(--command-color);
+}
+
+.output-line {
+    white-space: pre-wrap;
+    margin-bottom: 5px;
+}
+
+.output-line.error {
+    color: var(--error-color);
+}
+
+.output-line h2 {
+    color: var(--highlight-color);
+    border-bottom: 1px dashed var(--prompt-color);
+    padding-bottom: 5px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.output-line a {
+    color: var(--prompt-color);
+    text-decoration: underline;
+}
+
+.output-line a:hover {
+    color: var(--highlight-color);
+}
+
+.output-line .skill-bar {
+    display: flex;
+    align-items: center;
+    margin-bottom: 3px;
+}
+
+.output-line .skill-bar-name {
+    width: 25%;
+    min-width: 150px;
+}
+
+.output-line .skill-bar-progress {
+    width: 50%;
+    height: 12px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.output-line .skill-bar-fill {
+    height: 100%;
+    background-color: var(--command-color);
+    transition: width 0.5s ease-in-out;
+}
+
+/* --- Animation for boot sequence --- */
+.hidden {
+    opacity: 0;
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 600px) {
+    body { padding: 0; }
+    #terminal {
+        height: 100vh;
+        max-height: none;
+        border-radius: 0;
+        border: none;
+    }
+    .title {
+        font-size: 0.8em;
+        margin-right: 50px;
+    }
+}
